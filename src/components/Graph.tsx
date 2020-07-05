@@ -19,7 +19,7 @@ export default function Graph({ isRecording, data, setData }: AppProps) {
         const newData = [{x: nextX, y: y(nextX) }];
         setData(prevData => ([... prevData, ...newData]));
       }
-    }, 500);
+    }, 200);
     return () => clearInterval(interval);
   });
 

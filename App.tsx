@@ -4,7 +4,6 @@ import logo from './assets/logo.png';
 import Graph from './src/components/Graph'
 import _ from 'lodash';
 
-
 const y = (x: number) => Math.sin(x/10);
 
 export default function App() {
@@ -26,6 +25,25 @@ export default function App() {
             <Text style={styles.buttonText}> Reset </Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.tickerRow}>
+        <View style={styles.tickerBox}>
+          <Text style={styles.tickerLabel}>
+            Power Output (W)
+          </Text>
+          <Text style={styles.ticker}>
+            {data[data.length-1].x}
+          </Text>
+        </View>
+        <View style={styles.tickerBox}>
+          <Text style={styles.tickerLabel}>
+              Distance (Yards)
+            </Text>
+          <Text style={styles.ticker}>
+            {(data[data.length-1].y * 500 - 21).toFixed(3)}
+          </Text>
+        </View>
+      </View>
+     
     </View>
   );
 }
@@ -65,5 +83,23 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  tickerBox: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  tickerRow:{
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  ticker: {
+    margin: 15,
+    fontSize: 25
+  },
+  tickerLabel: {
+    margin: 15,
+    fontSize: 12
   }
 });
