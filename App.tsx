@@ -1,105 +1,37 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import logo from './assets/logo.png';
-import Graph from './src/components/Graph'
-import _ from 'lodash';
+import { StyleSheet } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import HomeScreen from './src/components/HomeScreen';
+import TickerScreen from './src/components/TickerScreen';
+import { DataProvider } from './src/context/DataContext'
 
-const y = (x: number) => Math.sin(x/10);
+
+
+
+
+const Tab = createMaterialTopTabNavigator();
 
 export default function App() {
-  const [isRecording, setRecording] = useState(false);
-  const [data, setData] = useState(_.range(50).map(x => ({x, y: y(x)})));
   const [isConnectedToBluetooth, setBluetoothConnection] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <Image source={logo} style={styles.logo} /> 
-      <Text style={styles.text}> Welcome to RAPTR Performance!</Text>
-      <Graph isRecording={isRecording} data={data} setData={setData}>
-      </Graph>
-      <View style={styles.buttonRow}>
-        <TouchableOpacity onPress={() => setRecording(!isRecording)} style={styles.button}>
-            <Text style={styles.buttonText}> {isRecording ? "Stop Recording" : "Start Recording"}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => setData([{x: 0, y: y(0)}])}>
-            <Text style={styles.buttonText}> Reset </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.tickerRow}>
-        <View style={styles.tickerBox}>
-          <Text style={styles.tickerLabel}>
-            Power Output (W)
-          </Text>
-          <Text style={styles.ticker}>
-            {data[data.length-1].x}
-          </Text>
-        </View>
-        <View style={styles.tickerBox}>
-          <Text style={styles.tickerLabel}>
-              Distance (Yards)
-            </Text>
-          <Text style={styles.ticker}>
-            {(data[data.length-1].y * 500 - 21).toFixed(3)}
-          </Text>
-        </View>
-      </View>
-     
-    </View>
+    <NavigationContainer>
+      <DataProvider>
+        <Tab.Navigator 
+          initialRouteName="HomeScreen"
+          swipeEnabled={true}
+          tabBarPosition="bottom"
+        >
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Ticker" component={TickerScreen} />
+        </Tab.Navigator>
+      </DataProvider>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    width: 305,
-    height: 130,
-  },
-  text: {
-    color: '#888',
-    fontSize: 20,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 20,
-    color: '#fff',
-  },
-  button: {
-    backgroundColor: "green",
-    height: 70,
-    padding: 20,
-    margin: 5,
-    borderRadius:5,
-  },
-  thumbnail: {
-    width: 300,
-    height: 300,
-    resizeMode: "contain"
-  },
-  buttonRow:{
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  tickerBox: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  tickerRow:{
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  ticker: {
-    margin: 15,
-    fontSize: 25
-  },
-  tickerLabel: {
-    margin: 15,
-    fontSize: 12
-  }
+  
 });

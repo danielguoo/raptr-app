@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View } from "react-native";
-import _ from 'lodash';
 import { VictoryChart, VictoryLine, VictoryZoomContainer } from "victory-native";
 
 const y = (x: number) => Math.sin(x/10);
