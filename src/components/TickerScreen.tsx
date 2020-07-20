@@ -2,11 +2,11 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import { DataContext } from '../context/DataContext'
 
-const TickerScreen = () => {
+export const Ticker = () => {
   return (
     <DataContext.Consumer>
       {({data}) => 
-        <View style={styles.tickerRow}>
+        <View style={styles.tickerContainer}>
           <View style={styles.tickerBox}>
             <Text style={styles.tickerLabel}>
               Power Output (W)
@@ -29,24 +29,30 @@ const TickerScreen = () => {
   )
 }
 
+const TickerScreen = () => {
+  return (
+    <Ticker/>
+  )
+}
+
 const styles = StyleSheet.create({
+  tickerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
+  },
   tickerBox: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  tickerRow:{
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   ticker: {
-    margin: 15,
-    fontSize: 25
+    fontSize: 40,
   },
   tickerLabel: {
-    margin: 15,
-    fontSize: 12
+    fontSize: 15,
+    alignContent: 'center',
   },
 });
 

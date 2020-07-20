@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from './src/components/HomeScreen';
 import TickerScreen from './src/components/TickerScreen';
-import { DataProvider } from './src/context/DataContext'
+import { DataProvider } from './src/context/DataContext';
 
 
 
