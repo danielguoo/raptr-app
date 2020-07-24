@@ -17,10 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "raptr.ios"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "android": {
+      "package": "raptr.android"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
