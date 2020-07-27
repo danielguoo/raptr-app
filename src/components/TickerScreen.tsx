@@ -20,7 +20,7 @@ export const Ticker = () => {
                 Distance (Yards)
               </Text>
             <Text style={styles.ticker}>
-              {(data[data.length-1].y * 500 - 21).toFixed(3)}
+              {(data[data.length-1].y).toFixed(3)}
             </Text>
           </View>
         </View>

@@ -4,16 +4,16 @@ import _ from 'lodash';
 const y = (x: number) => Math.sin(x/10);
 export const DataContext = React.createContext({
   data: [],
-  setData: undefined,
+  resetData: undefined,
   increasing: false,
-  setIncreasing: undefined
+  setIncreasing: undefined,
+  isRecording: false,
+  toggleRecording: undefined,
 });   
 
-export const DataProvider = ({children})  => {
-  const [data, setData] = useState(_.range(50).map(x => ({x, y: y(x)})));
-  const [increasing, setIncreasing] = useState(data[data.length-1].y > data[data.length-2].y)
+export const DataProvider = ({children, data, increasing, isRecording, resetData, toggleRecording})  => {
   return (
-    <DataContext.Provider value={{data, setData, increasing, setIncreasing}}>
+    <DataContext.Provider value={{data, increasing, isRecording, resetData, toggleRecording}}>
       {children}
     </DataContext.Provider>
   )

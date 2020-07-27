@@ -6,20 +6,19 @@ import { DataContext } from '../context/DataContext'
 import { Ticker } from './TickerScreen';
 
 const HomeScreen = ({navigation}) => {
-  const [isRecording, setRecording] = useState(false);
 
   return (
     <DataContext.Consumer>
-      {({data, setData, setIncreasing}) => (
+      {({data, increasing, isRecording, resetData, toggleRecording}) => (
         <View style={styles.container}>
           <Image source={logo} style={styles.logo}/> 
           <Text style={styles.text}> Welcome to RAPTR Performance!</Text>
-          <Graph isRecording={isRecording} data={data} setData={setData} setIncreasing={setIncreasing} />
+          <Graph data={data} />
           <View style={styles.buttonRow}>
-            <TouchableOpacity onPress={() => setRecording(!isRecording)} style={styles.button}>
+            <TouchableOpacity onPress={toggleRecording} style={styles.button}>
                 <Text style={styles.buttonText}> {isRecording ? "Stop Recording" : "Start Recording"}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => setData([{x: 0, y: 0}])}>
+            <TouchableOpacity style={styles.button} onPress={resetData}>
                 <Text style={styles.buttonText}> Reset </Text>
             </TouchableOpacity>
           </View>
