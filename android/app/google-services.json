@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "626453437798",
+    "firebase_url": "https://raptr-performance.firebaseio.com",
+    "project_id": "raptr-performance",
+    "storage_bucket": "raptr-performance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626453437798:android:9beda8f0a5f994b3a83ca7",
+        "android_client_info": {
+          "package_name": "com.raptr.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626453437798-v7d2mqauduk7d9qrpio4g6o86oa7a43a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeutrKCaH2zZx6ZNeBfnn9fjNbaToyZQs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626453437798-v7d2mqauduk7d9qrpio4g6o86oa7a43a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

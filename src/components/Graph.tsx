@@ -6,13 +6,17 @@ const y = (x: number) => Math.sin(x/10);
 
 type AppProps = {
   data: Array<{ x: number, y: number}>,
+  xMax: Number,
+  yMax: Number,
 };
 
-export default function Graph({ data}: AppProps) {
+export default function Graph({data, xMax, yMax}: AppProps) {
   return (
     <View>
       <VictoryChart
-        domain={{y: [-1,1]}}
+        padding={50}
+        height={500}
+        domain={{x: [0, xMax], y: [0, yMax]}}
       >
         <VictoryAxis
             dependentAxis={true}

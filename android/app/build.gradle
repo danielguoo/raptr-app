@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -81,6 +82,8 @@ project.ext.react = [
     enableHermes: false
 ]
 
+
+
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../node_modules/react-native/react.gradle"
 apply from: "../../node_modules/expo-updates/scripts/create-manifest-android.gradle"
@@ -131,7 +134,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'raptr.android'
+        applicationId 'com.raptr.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
