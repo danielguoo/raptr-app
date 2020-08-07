@@ -12,14 +12,14 @@ import database from '@react-native-firebase/database';
 import _ from 'lodash';
 
 const Tab = createMaterialTopTabNavigator();
-type AppState = {data: Array<Object>, isRecording: boolean, resetDistance: number, loading: boolean, name: String, deviceInfo: Object }
+type AppState = {data: Array<Object>, isRecording: boolean, resetDistance: number, lastDistance: number, loading: boolean, name: String, deviceInfo: Object }
 
 export default class App extends Component <{}, AppState>{
   manager: BleManager;
   constructor(props) {
     super(props);
     this.manager = new BleManager();
-    this.state = { data: [{x: 0, y: 0, dist: 0}], isRecording: false, resetDistance: 0, loading: false, name: '', deviceInfo: {id: null,  name: null} }
+    this.state = { data: [{x: 0, y: 0, dist: 0}], isRecording: false, resetDistance: 0, lastDistance: 0, loading: false, name: '', deviceInfo: {id: null,  name: null} }
     Platform.OS === 'android' && this.checkBlePermission();
   }
   componentDidMount() {
@@ -110,13 +110,17 @@ export default class App extends Component <{}, AppState>{
   }
 
   updateBLEData = (error: BleError, newValue: Characteristic) => {
+    const currentLength = this.state.data.length;
     const nextValues = decode(newValue.value).split(",");
     const pwr = parseFloat(nextValues[0]);
-    const dist = parseFloat(nextValues[1]) - this.state.resetDistance;
-    const currentLength = this.state.data.length;
+    let dist = parseFloat(nextValues[1]);
+
+    if (currentLength === 1 && this.state.lastDistance > 0) {
+      this.setState({resetDistance: dist - this.state.lastDistance});
+    }
 
     if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
-      this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist}]})
+      this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist: dist - this.state.resetDistance}]})
     }
   }
 
@@ -145,7 +149,7 @@ export default class App extends Component <{}, AppState>{
       })
         .then(() => console.log('Data updated.'));
 
-    this.setState({data: [{ x: 0, y: 0, dist: 0 }], resetDistance: this.state.data[this.state.data.length-1].dist})
+    this.setState({data: [{ x: 0, y: 0, dist: 0 }]})
   }
 
   render() {
