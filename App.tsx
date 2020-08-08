@@ -114,10 +114,10 @@ export default class App extends Component <{}, AppState>{
     const nextValues = decode(newValue.value).split(",");
     const pwr = parseFloat(nextValues[0]);
     let dist = parseFloat(nextValues[1]);
-    let resetDistance = 0;
+    let resetDistance = this.state.resetDistance;
 
     if (!error && this.state.isRecording && currentLength === 1 && this.state.lastDistance > 0) {
-      resetDistance = dist - this.state.lastDistance;
+      resetDistance = this.state.lastDistance;
     }
     console.log(this.state.data,this.state.resetDistance)
     dist -= resetDistance;
