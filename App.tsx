@@ -114,16 +114,14 @@ export default class App extends Component <{}, AppState>{
     const nextValues = decode(newValue.value).split(",");
     const pwr = parseFloat(nextValues[0]);
     let dist = parseFloat(nextValues[1]);
-    let resetDistance = 0;
+    let resetDistance = this.state.resetDistance;
 
-    if (!error && this.state.isRecording && currentLength === 1 && this.state.lastDistance > 0) {
-      resetDistance = this.state.lastDistance;
+    if (!error && this.state.isRecording && currentLength === 1) {
+      resetDistance = dist;
     }
 
-    dist -= resetDistance;
-
     if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
-      this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist}], lastDistance: dist, resetDistance})
+      this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist: dist - resetDistance}], resetDistance})
     }
   }
 
