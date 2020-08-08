@@ -117,10 +117,10 @@ export default class App extends Component <{}, AppState>{
     let resetDistance = 0;
 
     if (!error && this.state.isRecording && currentLength === 1 && this.state.lastDistance > 0) {
-      resetDistance = dist - this.state.lastDistance;
+      resetDistance = this.state.lastDistance;
     }
 
-    dist -= this.state.resetDistance;
+    dist -= resetDistance;
 
     if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
       this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist}], lastDistance: dist, resetDistance})
