@@ -61,7 +61,7 @@ export default class App extends Component <{}, AppState>{
                         )
                         const dialog = temp.find(
                             characteristic =>
-                                characteristic.isNotifiable && characteristic.uuid[0] === '6'
+                                characteristic.isNotifiable && characteristic.uuid[0] === '8'
                         )
                         if (!dialog) {
                             reject('No writable characteristic')
@@ -86,7 +86,7 @@ export default class App extends Component <{}, AppState>{
       if (error) return;
       if (device.name != null) {
         // Connect to first device found
-        if (device.name.match("Adafruit")) {
+        if (device.name.match("RAPT")) {
           this.manager.stopDeviceScan();
           this.selectedDevice = device;
           this.selectedDevice.connect()
@@ -112,6 +112,7 @@ export default class App extends Component <{}, AppState>{
   updateBLEData = (error: BleError, newValue: Characteristic) => {
     const currentLength = this.state.data.length;
     const nextValues = decode(newValue.value).split(",");
+    console.log(newValue, nextValues);
     const pwr = parseFloat(nextValues[0]);
     let dist = parseFloat(nextValues[1]);
     let resetDistance = this.state.resetDistance;
