@@ -112,7 +112,7 @@ export default class App extends Component <{}, AppState>{
   updateBLEData = (error: BleError, newValue: Characteristic) => {
     const currentLength = this.state.data.length;
     const nextValues = decode(newValue.value).split(",");
-    console.log(newValue.uuid, newValue.value[0], nextValues);
+    console.log(newValue.uuid,newValue.value, nextValues);
     const pwr = parseFloat(nextValues[0]);
     let dist = parseFloat(nextValues[1]);
     let resetDistance = this.state.resetDistance;
