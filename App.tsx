@@ -61,7 +61,7 @@ export default class App extends Component <{}, AppState>{
                         )
                         const dialog = temp.find(
                             characteristic =>
-                                characteristic.isNotifiable && characteristic.uuid[0] === '8'
+                                characteristic.isNotifiable && characteristic.uuid[0] === '6'
                         )
                         if (!dialog) {
                             reject('No writable characteristic')
@@ -86,7 +86,7 @@ export default class App extends Component <{}, AppState>{
       if (error) return;
       if (device.name != null) {
         // Connect to first device found
-        if (device.name.match("RAPT")) {
+        if (device.name.match("Adafruit")) {
           this.manager.stopDeviceScan();
           this.selectedDevice = device;
           this.selectedDevice.connect()
