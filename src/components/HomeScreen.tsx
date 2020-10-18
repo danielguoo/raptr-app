@@ -3,8 +3,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View, Mo
 import logo from '../../assets/logo.png';
 import Graph from './Graph'
 import { DataContext } from '../context/DataContext'
-import { Ticker } from './TickerScreen';
+import { Ticker, GoalSetter } from './TickerScreen';
 import { TextInput } from 'react-native-gesture-handler';
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
   const [xMax, setXMax] = useState(30);
@@ -12,10 +13,10 @@ const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
     <DataContext.Consumer>
-      {({data, isRecording, resetData, toggleRecording, loading, name, setName}) => (
-         loading ? 
+      {({ data, isRecording, resetData, toggleRecording, loading, name, setName, pwrGoal, setGoal }) => (
+        loading ?
           <View style={styles.container}>
-            <Image source={logo} style={styles.logo}/> 
+            <Image source={logo} style={styles.logo} />
             <ActivityIndicator size='large' />
             <Text style={styles.connectMessage}>
               Connecting to Bluetooth Device
@@ -24,39 +25,40 @@ const HomeScreen = () => {
           :
           <View style={styles.container}>
             <View style={styles.topRow}>
-              <Image source={logo} style={styles.logo}/>
+              <Image source={logo} style={styles.logo} />
               <View style={[styles.inputRow]}>
+                <GoalSetter setGoal={setGoal} goal={pwrGoal} />
                 <Text style={styles.label}>
-                  X: 
+                  X:
                 </Text>
                 <TextInput
                   style={styles.input}
                   value={xMax.toString()}
-                  onChangeText={text=>setXMax(parseInt(text) || 0)}
+                  onChangeText={text => setXMax(parseInt(text) || 0)}
                 />
                 <Text style={styles.label}>
                   Y:
                 </Text>
                 <TextInput
                   style={styles.input}
-                  value={yMax.toString() }
-                  onChangeText={text=>setYMax(parseInt(text) || 0)}
+                  value={yMax.toString()}
+                  onChangeText={text => setYMax(parseInt(text) || 0)}
                 />
-              </View> 
+              </View>
             </View>
             <View style={styles.GraphView}>
-              <Graph data={data.map(point => ({x: point.dist, y: point.y}))} xMax={Math.max(xMax, data[data.length-1].dist + 5)} yMax={yMax}/>
+              <Graph data={data.map(point => ({ x: point.dist, y: point.y }))} xMax={Math.max(xMax, data[data.length - 1].dist + 5)} yMax={yMax} pwrGoal={pwrGoal} />
             </View>
             <View style={styles.Row}>
-              <TouchableOpacity onPress={ isRecording || data.length > 1 ? toggleRecording : () => setModalVisible(true)} style={[styles.button, isRecording && styles.recordingButton]}>
-                  <Text style={styles.buttonText}> {isRecording ? "Pause" : data.length > 1 ? "Continue" : "Start Recording"}</Text>
+              <TouchableOpacity onPress={isRecording || data.length > 1 ? toggleRecording : () => setModalVisible(true)} style={[styles.button, isRecording && styles.recordingButton]}>
+                <Text style={styles.buttonText}> {isRecording ? "Pause" : data.length > 1 ? "Continue" : "Start Recording"}</Text>
               </TouchableOpacity>
               {
                 !isRecording && data.length > 1 &&
                 <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={resetData}>
-                    <Text style={styles.buttonText}> Save and Reset </Text>
+                  <Text style={styles.buttonText}> Save and Reset </Text>
                 </TouchableOpacity>
-              } 
+              }
             </View>
             <Modal
               animationType="slide"
@@ -88,7 +90,7 @@ const HomeScreen = () => {
             </Modal>
             <Ticker tickerScreen={false} />
           </View>
-      )} 
+      )}
     </DataContext.Consumer>
   )
 }
@@ -104,13 +106,17 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlignVertical: 'center',
-    padding: 10
+    padding: 10,
+    color: 'white',
   },
   topRow: {
+
     flex: 1,
-    width: 1000,
+    width: '100%',
     flexDirection: 'row',
+    backgroundColor: '#fff',
     justifyContent: 'space-between',
+    paddingBottom: 5,
   },
   inputRow: {
     height: 100,
@@ -124,6 +130,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 50,
     borderColor: 'gray',
+    color: 'white',
   },
   text: {
     color: '#888',
@@ -131,7 +138,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -146,15 +153,16 @@ const styles = StyleSheet.create({
     backgroundColor: "green",
     height: 70,
     padding: 20,
-    margin: 0,
+    margin: 60,
     borderRadius: 5,
   },
   resetButton: {
     backgroundColor: "grey",
   },
   GraphView: {
+    flex: 5,
   },
-  Row:{
+  Row: {
     margin: 5,
     flex: 1,
     flexDirection: 'row',
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalView: {
-    backgroundColor: "white",
+    backgroundColor: "#1f241e",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -197,6 +205,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 30,
     borderColor: 'gray',
+    color: 'white',
   },
   textStyle: {
     color: "white",
@@ -205,7 +214,8 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    color: 'white',
   }
 });
 

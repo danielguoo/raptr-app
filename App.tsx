@@ -12,14 +12,14 @@ import database from '@react-native-firebase/database';
 import _ from 'lodash';
 
 const Tab = createMaterialTopTabNavigator();
-type AppState = {data: Array<Object>, isRecording: boolean, resetDistance: number, lastDistance: number, loading: boolean, name: String, deviceInfo: Object }
+type AppState = { data: Array<Object>, isRecording: boolean, pwrGoal: number, resetDistance: number, lastDistance: number, loading: boolean, name: String, deviceInfo: Object }
 
-export default class App extends Component <{}, AppState>{
+export default class App extends Component<{}, AppState>{
   manager: BleManager;
   constructor(props) {
     super(props);
     this.manager = new BleManager();
-    this.state = { data: [{x: 0, y: 0, dist: 0}], isRecording: false, resetDistance: 0, lastDistance: 0, loading: false, name: '', deviceInfo: {id: null,  name: null} }
+    this.state = { data: [{ x: 0, y: 0, dist: 0 }], isRecording: false, pwrGoal: 150, resetDistance: 0, lastDistance: 0, loading: false, name: '', deviceInfo: { id: null, name: null } }
     Platform.OS === 'android' && this.checkBlePermission();
   }
   componentDidMount() {
@@ -34,9 +34,9 @@ export default class App extends Component <{}, AppState>{
   async checkBlePermission() {
     const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
     if (!granted)
-    await this.requestBlePermission();
+      await this.requestBlePermission();
   }
-  
+
   async requestBlePermission() {
     try {
       await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
@@ -46,37 +46,37 @@ export default class App extends Component <{}, AppState>{
   }
   getServicesAndCharacteristics(device: Device) {
     return new Promise((resolve, reject) => {
-        device.services().then(services => {
-            const characteristics = [];
-            services.forEach((service, i) => {
-                service.characteristics().then(c => {
-                    characteristics.push(c)
+      device.services().then(services => {
+        const characteristics = [];
+        services.forEach((service, i) => {
+          service.characteristics().then(c => {
+            characteristics.push(c)
 
-                    if (i === services.length - 1) {
-                        const temp = characteristics.reduce(
-                            (acc, current) => {
-                                return [...acc, ...current]
-                            },
-                            []
-                        )
-                        const dialog = temp.find(
-                            characteristic =>
-                                characteristic.isNotifiable && characteristic.uuid[0] === '6'
-                        )
-                        if (!dialog) {
-                            reject('No writable characteristic')
-                        }
-                        resolve(dialog)
-                    }
-                })
-            })
+            if (i === services.length - 1) {
+              const temp = characteristics.reduce(
+                (acc, current) => {
+                  return [...acc, ...current]
+                },
+                []
+              )
+              const dialog = temp.find(
+                characteristic =>
+                  characteristic.isNotifiable && characteristic.uuid[0] === '6'
+              )
+              if (!dialog) {
+                reject('No writable characteristic')
+              }
+              resolve(dialog)
+            }
+          })
         })
+      })
     })
   }
 
   reconnect(error: BleError | null, device: Device | null) {
     this.state.deviceInfo.subscription.remove();
-    this.setState({loading: true});
+    this.setState({ loading: true });
     this.scanAndConnect();
   }
 
@@ -90,20 +90,20 @@ export default class App extends Component <{}, AppState>{
           this.manager.stopDeviceScan();
           this.selectedDevice = device;
           this.selectedDevice.connect()
-          .then((device: Device) => device.discoverAllServicesAndCharacteristics())
-          .then(async (device: Device) => {
-            this.setState({deviceInfo : {name: device.name, id: device.id}})
-            console.log(device.name, device.id)
-            this.getServicesAndCharacteristics(device)
-              .then(a => {
-                const subscription = this.manager.monitorCharacteristicForDevice(device.id, a.serviceUUID, a.uuid, this.updateBLEData);
-                this.setState({deviceInfo: {...this.state.deviceInfo, subscription} })
-              })                     
-          })
-          .then(()=> this.setState({loading: false}))
-          .catch((error) => {
-            // Handle errors
-          });
+            .then((device: Device) => device.discoverAllServicesAndCharacteristics())
+            .then(async (device: Device) => {
+              this.setState({ deviceInfo: { name: device.name, id: device.id } })
+              console.log(device.name, device.id)
+              this.getServicesAndCharacteristics(device)
+                .then(a => {
+                  const subscription = this.manager.monitorCharacteristicForDevice(device.id, a.serviceUUID, a.uuid, this.updateBLEData);
+                  this.setState({ deviceInfo: { ...this.state.deviceInfo, subscription } })
+                })
+            })
+            .then(() => this.setState({ loading: false }))
+            .catch((error) => {
+              // Handle errors
+            });
         }
       }
     });
@@ -112,7 +112,7 @@ export default class App extends Component <{}, AppState>{
   updateBLEData = (error: BleError, newValue: Characteristic) => {
     const currentLength = this.state.data.length;
     const nextValues = decode(newValue.value).split(",");
-    console.log(newValue.uuid,newValue.value, nextValues);
+    console.log(newValue.uuid, newValue.value, nextValues);
     const pwr = parseFloat(nextValues[0]);
     let dist = parseFloat(nextValues[1]);
     let resetDistance = this.state.resetDistance;
@@ -120,26 +120,31 @@ export default class App extends Component <{}, AppState>{
     if (!error && this.state.isRecording && currentLength === 1) {
       resetDistance = dist;
     }
-    
+
 
     if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
-      this.setState({data: [...this.state.data, {x: currentLength, y: pwr, dist: dist - resetDistance}], resetDistance})
+      this.setState({ data: [...this.state.data, { x: currentLength, y: pwr, dist: dist - resetDistance }], resetDistance })
     }
   }
 
   toggleRecording = () => {
-    this.setState({isRecording: !this.state.isRecording})
+    this.setState({ isRecording: !this.state.isRecording })
   }
 
   setName = (name: String) => {
-    this.setState({name})
+    this.setState({ name })
+  }
+
+  setGoal = (newGoal: number) => {
+    if (newGoal > 0)
+      this.setState({ pwrGoal: newGoal })
   }
 
   resetData = () => {
     const { name, data } = this.state;
     const capitalizedName = _.startCase(name);
     const maxPower = data.map(a => a.y).reduce((acc, curr) => Math.max(acc, curr));
-    const distance = data[data.length-1].dist;
+    const distance = data[data.length - 1].dist;
     const date = new Date(Date.now()).toJSON();
 
     database()
@@ -150,13 +155,13 @@ export default class App extends Component <{}, AppState>{
         distance,
         date,
       })
-        .then(() => console.log('Data updated.'));
+      .then(() => console.log('Data updated.'));
 
-    this.setState({data: [{ x: 0, y: 0, dist: 0 }]})
+    this.setState({ data: [{ x: 0, y: 0, dist: 0 }] })
   }
 
   render() {
-    const { data, isRecording, name, loading } = this.state;
+    const { data, isRecording, name, loading, pwrGoal } = this.state;
     return (
       <NavigationContainer>
         <DataProvider
@@ -165,19 +170,21 @@ export default class App extends Component <{}, AppState>{
           resetData={this.resetData}
           toggleRecording={this.toggleRecording}
           name={name}
+          pwrGoal={pwrGoal}
+          setGoal={this.setGoal}
           setName={this.setName}
           loading={loading}
         >
-          <Tab.Navigator 
-          initialRouteName="HomeScreen"
-          swipeEnabled={true}
-          tabBarPosition="bottom"
+          <Tab.Navigator
+            initialRouteName="HomeScreen"
+            swipeEnabled={true}
+            tabBarPosition="bottom"
           >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Ticker" component={TickerScreen} />
           </Tab.Navigator>
         </DataProvider>
       </NavigationContainer>
-      );
-    }
+    );
   }
+}

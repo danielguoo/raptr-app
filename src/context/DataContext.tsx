@@ -1,7 +1,6 @@
 import React from 'react'
 import _ from 'lodash';
 
-const y = (x: number) => Math.sin(x/10);
 export const DataContext = React.createContext({
   data: [],
   resetData: undefined,
@@ -10,11 +9,13 @@ export const DataContext = React.createContext({
   loading: false,
   name: '',
   setName: undefined,
-});   
+  pwrGoal: 0,
+  setGoal: undefined,
+});
 
-export const DataProvider = ({children, data, isRecording, resetData, toggleRecording, loading, name, setName})  => {
+export const DataProvider = ({ children, data, isRecording, resetData, toggleRecording, loading, name, setName, pwrGoal, setGoal }) => {
   return (
-    <DataContext.Provider value={{data, isRecording, resetData, toggleRecording, loading, name, setName}}>
+    <DataContext.Provider value={{ data, isRecording, resetData, toggleRecording, loading, name, setName, pwrGoal, setGoal }}>
       {children}
     </DataContext.Provider>
   )
