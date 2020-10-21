@@ -1,8 +1,12 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native';
+import React, { } from 'react'
+import { Image, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { DataContext } from '../context/DataContext'
-import { VictoryContainer, VictoryPie } from "victory-native"
+import { VictoryPie } from "victory-native"
+import logo from '../../assets/logo.png';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export const Ticker = ({ tickerScreen }) => {
   return (
@@ -39,16 +43,16 @@ export const PowerCircle = ({ pwrGoal, pwr, pwrColor }) => {
 
     <View style={styles.goalMeter} >
       <Text style={{ position: 'absolute', marginTop: 100, fontSize: 20, color: 'white' }}>Power (Watts) </Text>
-      <Text style={{ color: pwrColor, position: 'absolute', marginTop: 120, fontSize: 150 }} >
+      <Text style={{ color: pwrColor, position: 'absolute', marginTop: 110, fontSize: 150 }} >
         {pwr}
       </Text>
 
       <VictoryPie
         labels={() => null}
         colorScale={[pwrColor, "#1f241e"]}
-        width={420}
-        origin={{ y: 215 }}
-        radius={210}
+        width={400}
+        origin={{ y: 200 }}
+        radius={200}
         innerRadius={180}
         data={[
           { x: "Output", y: pwr },
@@ -59,9 +63,9 @@ export const PowerCircle = ({ pwrGoal, pwr, pwrColor }) => {
   )
 }
 
-const MiniCircle = ({ label, value, x, y }) => {
+const MiniCircle = ({ style, label, value }) => {
   return (
-    <View style={{ position: 'absolute', width: 320, height: 320, borderRadius: 160, alignItems: 'center', marginTop: y, marginLeft: x, borderWidth: 10, borderColor: "#1f241e" }}>
+    <View style={[style, { position: 'absolute', width: 320, height: 320, borderRadius: 160, alignItems: 'center', borderWidth: 10, borderColor: "#1f241e" }]}>
       <Text style={{ color: 'white', fontSize: 20, paddingTop: 70 }}> {label} </Text>
       <Text style={{ color: 'white', fontSize: 100 }} >
         {value}
@@ -78,15 +82,23 @@ const TickerScreen = () => {
         let dist = (data[data.length - 1].dist).toFixed(2)
         let speed = (dist / data.length * 100).toFixed(2)
         return (
-          <View style={styles.topContainer}>
-            <View>
-              <MiniCircle label={"Distance (Meters)"} value={dist} x={660} y={360} />
-              <MiniCircle label={"Speed (MPH)"} value={speed} x={40} y={360} />
+          <View style={{ backgroundColor: 'black', flex: 2, }}>
+            <View style={styles.topRow}>
+              <Image source={logo} style={styles.logo} />
             </View>
-            <PowerCircle pwr={pwr} pwrGoal={pwrGoal} pwrColor={determinePowerColor(data)} />
-            <GoalSetter goal={pwrGoal} setGoal={setGoal} />
+
+            <View style={{ flex: 7 }}>
+              <View >
+                <MiniCircle style={styles.LeftCircle} label={"Distance (Meters)"} value={dist} />
+                <MiniCircle style={styles.RightCircle} label={"Speed (MPH)"} value={speed} />
+              </View>
+              <PowerCircle pwr={pwr} pwrGoal={pwrGoal} pwrColor={determinePowerColor(data)} />
+              <GoalSetter goal={pwrGoal} setGoal={setGoal} />
+            </View>
+
 
           </View>
+
         )
       }
       }
@@ -96,26 +108,48 @@ const TickerScreen = () => {
 
 export const GoalSetter = ({ goal, setGoal }) => {
   return (
-    <View style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: "row", display: 'flex', backgroundColor: "#1f241e", padding: 5, borderRadius: 30 }}>
-      <TouchableOpacity onPress={() => setGoal(goal - 10)}>
-        <Text style={{ fontSize: 50, color: 'white' }}>-</Text>
-      </TouchableOpacity>
-      <Text style={{ borderStyle: 'solid', borderColor: 'white', color: 'white', fontSize: 40, margin: 7 }}>
-        {goal}
-      </Text>
-      <TouchableOpacity onPress={() => setGoal(goal + 10)}>
-        <Text style={{ fontSize: 50, color: 'white' }}>+</Text>
-      </TouchableOpacity>
+    <View style={{ flexDirection: "column", justifyContent: 'center', alignItems: 'center', backgroundColor: "#1f241e", padding: 6, borderRadius: 40, alignSelf: 'center' }}>
+      <Text style={{ color: 'white' }}>GOAL</Text>
+      <View style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center', flexDirection: "row", display: 'flex' }}>
+        <TouchableOpacity onPress={() => setGoal(goal - 10)}>
+          <Text style={{ fontSize: 40, color: 'white' }}>-</Text>
+        </TouchableOpacity>
+        <Text style={{ borderStyle: 'solid', borderColor: 'white', color: 'white', fontSize: 40, margin: 3, marginBottom: 1 }}>
+          {goal}
+        </Text>
+        <TouchableOpacity onPress={() => setGoal(goal + 10)}>
+          <Text style={{ fontSize: 40, color: 'white' }}>+</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  topContainer: {
-    backgroundColor: 'black',
+  logo: {
+    width: 200,
+    height: 100,
+    marginTop: 10,
+  },
+  topRow: {
+
     flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    height: 20,
+
+  },
+  LeftCircle: {
+    marginLeft: windowWidth * .02,
+    marginTop: windowHeight * .4
+  },
+  RightCircle: {
+    marginLeft: .98 * windowWidth - 320,
+    marginTop: windowHeight * .4
   },
   goalMeter: {
+    zIndex: 0,
     alignItems: 'center',
     alignSelf: 'center',
     marginTop: 80,

@@ -5,7 +5,7 @@ import Graph from './Graph'
 import { DataContext } from '../context/DataContext'
 import { Ticker, GoalSetter } from './TickerScreen';
 import { TextInput } from 'react-native-gesture-handler';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import { FontAwesome5, Foundation } from '@expo/vector-icons';
 
 const HomeScreen = () => {
   const [xMax, setXMax] = useState(30);
@@ -44,19 +44,23 @@ const HomeScreen = () => {
                   value={yMax.toString()}
                   onChangeText={text => setYMax(parseInt(text) || 0)}
                 />
+                <Text style={{ color: "black", fontSize: 50, paddingHorizontal: 20 }}>
+                  {name}
+                </Text>
               </View>
+
             </View>
             <View style={styles.GraphView}>
               <Graph data={data.map(point => ({ x: point.dist, y: point.y }))} xMax={Math.max(xMax, data[data.length - 1].dist + 5)} yMax={yMax} pwrGoal={pwrGoal} />
             </View>
             <View style={styles.Row}>
-              <TouchableOpacity onPress={isRecording || data.length > 1 ? toggleRecording : () => setModalVisible(true)} style={[styles.button, isRecording && styles.recordingButton]}>
-                <Text style={styles.buttonText}> {isRecording ? "Pause" : data.length > 1 ? "Continue" : "Start Recording"}</Text>
+              <TouchableOpacity onPress={isRecording || data.length > 1 ? toggleRecording : () => setModalVisible(true)} style={[styles.button]}>
+                <Text style={styles.buttonText}> {isRecording ? <Foundation name="pause" size={60} color="red" /> : <FontAwesome5 name="play-circle" size={60} color="red" />}</Text>
               </TouchableOpacity>
               {
                 !isRecording && data.length > 1 &&
                 <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={resetData}>
-                  <Text style={styles.buttonText}> Save and Reset </Text>
+                  <Text> <FontAwesome5 name="stop-circle" size={60} color="red" /> </Text>
                 </TouchableOpacity>
               }
             </View>
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
   label: {
     textAlignVertical: 'center',
     padding: 10,
-    color: 'white',
+    color: 'black',
   },
   topRow: {
 
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 50,
     borderColor: 'gray',
-    color: 'white',
+    color: 'black',
   },
   text: {
     color: '#888',
@@ -146,18 +150,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
   },
-  recordingButton: {
-    backgroundColor: "red",
-  },
+
   button: {
-    backgroundColor: "green",
+
     height: 70,
-    padding: 20,
-    margin: 60,
+    marginTop: 50,
+    marginHorizontal: 20,
     borderRadius: 5,
-  },
-  resetButton: {
-    backgroundColor: "grey",
   },
   GraphView: {
     flex: 5,
