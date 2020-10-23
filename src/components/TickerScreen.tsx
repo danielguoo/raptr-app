@@ -1,9 +1,11 @@
-import React, { } from 'react'
+import React, { useState } from 'react'
 import { Image, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { DataContext } from '../context/DataContext'
 import { VictoryPie } from "victory-native"
 import logo from '../../assets/logo.png';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { FontAwesome5, Foundation } from '@expo/vector-icons';
+import { NameModal } from './HomeScreen'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -43,7 +45,7 @@ export const PowerCircle = ({ pwrGoal, pwr, pwrColor }) => {
 
     <View style={styles.goalMeter} >
       <Text style={{ position: 'absolute', marginTop: 100, fontSize: 20, color: 'white' }}>Power (Watts) </Text>
-      <Text style={{ color: pwrColor, position: 'absolute', marginTop: 110, fontSize: 150 }} >
+      <Text style={{ color: pwrColor, position: 'absolute', marginTop: pwr >= 100 ? 150 : 110, fontSize: pwr >= 100 ? 75 : 150 }} >
         {pwr}
       </Text>
 
@@ -75,19 +77,24 @@ const MiniCircle = ({ style, label, value }) => {
 }
 
 const TickerScreen = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <DataContext.Consumer>
-      {({ data, pwrGoal, setGoal }) => {
-        let pwr = data[data.length - 1].y
-        let dist = (data[data.length - 1].dist).toFixed(2)
-        let speed = (dist / data.length * 100).toFixed(2)
+      {({ data, pwrGoal, setGoal, setName, name, isRecording, resetData, toggleRecording }) => {
+        let pwr = isRecording ? (data[data.length - 1].y).toFixed(2) : 0
+        let dist = isRecording ? (data[data.length - 1].dist) : 0
+        dist = (dist >= 100 ? dist.toFixed(1) : dist.toFixed(2))
+        let speed = isRecording ? (dist / data.length * 100).toFixed(2) : 0
         return (
           <View style={{ backgroundColor: 'black', flex: 2, }}>
             <View style={styles.topRow}>
               <Image source={logo} style={styles.logo} />
             </View>
 
-            <View style={{ flex: 7 }}>
+            <View style={{ flex: 6 }}>
+              <Text style={{ color: "white", position: 'absolute', fontSize: 30, paddingHorizontal: 20, alignSelf: 'flex-end' }}>
+                {name}
+              </Text>
               <View >
                 <MiniCircle style={styles.LeftCircle} label={"Distance (Meters)"} value={dist} />
                 <MiniCircle style={styles.RightCircle} label={"Speed (MPH)"} value={speed} />
@@ -95,7 +102,18 @@ const TickerScreen = () => {
               <PowerCircle pwr={pwr} pwrGoal={pwrGoal} pwrColor={determinePowerColor(data)} />
               <GoalSetter goal={pwrGoal} setGoal={setGoal} />
             </View>
-
+            <NameModal toggleRecording={toggleRecording} modalVisible={modalVisible} setName={setName} setModalVisible={setModalVisible} name={name} />
+            <View style={styles.Row}>
+              <TouchableOpacity onPress={isRecording || data.length > 1 ? toggleRecording : () => setModalVisible(true)} style={[styles.button]}>
+                <Text> {isRecording ? <Foundation name="pause" size={60} color="red" /> : <FontAwesome5 name="play-circle" size={60} color="red" />}</Text>
+              </TouchableOpacity>
+              {
+                !isRecording && data.length > 1 &&
+                <TouchableOpacity style={styles.button} onPress={resetData}>
+                  <Text> <FontAwesome5 name="stop-circle" size={60} color="red" /> </Text>
+                </TouchableOpacity>
+              }
+            </View>
 
           </View>
 
@@ -140,13 +158,21 @@ const styles = StyleSheet.create({
     height: 20,
 
   },
+
   LeftCircle: {
-    marginLeft: windowWidth * .02,
-    marginTop: windowHeight * .4
+    marginLeft: windowWidth * .015,
+    marginTop: windowHeight * .385
   },
   RightCircle: {
-    marginLeft: .98 * windowWidth - 320,
-    marginTop: windowHeight * .4
+    marginLeft: .985 * windowWidth - 320,
+    marginTop: windowHeight * .385
+  },
+  button: {
+
+    height: 70,
+    marginTop: 50,
+    marginHorizontal: 20,
+    borderRadius: 5,
   },
   goalMeter: {
     zIndex: 0,
@@ -174,6 +200,15 @@ const styles = StyleSheet.create({
   ticker: {
     fontSize: 35,
     color: 'white',
+  },
+  Row: {
+    margin: 5,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop: windowHeight * .72
   },
   tickerLabel: {
     fontSize: 15,

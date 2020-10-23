@@ -23,7 +23,7 @@ const HomeScreen = () => {
             </Text>
           </View>
           :
-          <View style={styles.container}>
+          <View style={[styles.container, !loading && { backgroundColor: 'black' }]}>
             <View style={styles.topRow}>
               <Image source={logo} style={styles.logo} />
               <View style={[styles.inputRow]}>
@@ -44,13 +44,14 @@ const HomeScreen = () => {
                   value={yMax.toString()}
                   onChangeText={text => setYMax(parseInt(text) || 0)}
                 />
-                <Text style={{ color: "black", fontSize: 50, paddingHorizontal: 20 }}>
-                  {name}
-                </Text>
+
               </View>
 
             </View>
             <View style={styles.GraphView}>
+              <Text style={{ color: "white", position: 'absolute', fontSize: 30, paddingHorizontal: 20, alignSelf: 'flex-end' }}>
+                {name}
+              </Text>
               <Graph data={data.map(point => ({ x: point.dist, y: point.y }))} xMax={Math.max(xMax, data[data.length - 1].dist + 5)} yMax={yMax} pwrGoal={pwrGoal} />
             </View>
             <View style={styles.Row}>
@@ -59,46 +60,50 @@ const HomeScreen = () => {
               </TouchableOpacity>
               {
                 !isRecording && data.length > 1 &&
-                <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={resetData}>
+                <TouchableOpacity style={styles.button} onPress={resetData}>
                   <Text> <FontAwesome5 name="stop-circle" size={60} color="red" /> </Text>
                 </TouchableOpacity>
               }
             </View>
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={modalVisible}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>Please enter your name: </Text>
-                  <TextInput
-                    style={styles.nameInput}
-                    value={name}
-                    onChangeText={text => setName(text)}
-                  />
-                  <TouchableHighlight
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                    onPress={() => {
-                      {
-                        setModalVisible(!modalVisible);
-                        toggleRecording();
-                      }
-                    }}
-                  >
-                    <Text style={styles.textStyle}>Start</Text>
-                  </TouchableHighlight>
-                </View>
-              </View>
-              <View style={styles.bottomHalf} />
-            </Modal>
+            <NameModal toggleRecording={toggleRecording} modalVisible={modalVisible} setName={setName} setModalVisible={setModalVisible} name={name} />
             <Ticker tickerScreen={false} />
           </View>
       )}
     </DataContext.Consumer>
   )
 }
-
+export const NameModal = ({ toggleRecording, modalVisible, setName, setModalVisible, name }) => {
+  return (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Please enter your name: </Text>
+          <TextInput
+            style={styles.nameInput}
+            value={name}
+            onChangeText={text => setName(text)}
+          />
+          <TouchableHighlight
+            style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+            onPress={() => {
+              {
+                setModalVisible(!modalVisible);
+                toggleRecording();
+              }
+            }}
+          >
+            <Text style={styles.textStyle}>Start</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+      <View style={styles.bottomHalf} />
+    </Modal>
+  )
+}
 const styles = StyleSheet.create({
   logo: {
     width: 200,
@@ -120,7 +125,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     justifyContent: 'space-between',
-    paddingBottom: 5,
+    paddingBottom: 17.5,
+    paddingRight: 20,
   },
   inputRow: {
     height: 100,
@@ -142,15 +148,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
-    fontSize: 20,
-    color: '#fff',
-  },
-
   button: {
 
     height: 70,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   Row: {
-    margin: 5,
+    marginTop: 10,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1f241e",
     borderRadius: 20,
     padding: 35,
+    marginTop: 100,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

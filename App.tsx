@@ -19,7 +19,7 @@ export default class App extends Component<{}, AppState>{
   constructor(props) {
     super(props);
     this.manager = new BleManager();
-    this.state = { data: [{ x: 0, y: 0, dist: 0 }], isRecording: false, pwrGoal: 150, resetDistance: 0, lastDistance: 0, loading: false, name: '', deviceInfo: { id: null, name: null } }
+    this.state = { data: [{ x: 0, y: 0, dist: 0 }], isRecording: false, pwrGoal: 150, resetDistance: 0, lastDistance: 0, loading: true, name: '', deviceInfo: { id: null, name: null } }
     Platform.OS === 'android' && this.checkBlePermission();
   }
   componentDidMount() {
@@ -179,6 +179,9 @@ export default class App extends Component<{}, AppState>{
             initialRouteName="HomeScreen"
             swipeEnabled={true}
             tabBarPosition="bottom"
+            tabBarOptions={{
+              style: { height: 35, paddingBottom: 4 },
+            }}
           >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Ticker" component={TickerScreen} />

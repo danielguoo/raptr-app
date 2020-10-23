@@ -25,10 +25,15 @@ export default function Graph({ data, xMax, yMax, pwrGoal }: AppProps) {
               axis: {
                 stroke: 'white',
               },
+              axisLabel: {
+                color: 'white',
+                fill: 'white',
+
+                paddingTop: 5,
+              },
               tickLabels: {
                 fill: 'white',
                 padding: 7,
-                fontWeight: 'bold',
               },
               ticks: {
                 stroke: 'white',
@@ -39,6 +44,12 @@ export default function Graph({ data, xMax, yMax, pwrGoal }: AppProps) {
       >
         <VictoryAxis
           dependentAxis={true}
+          label="Power (Watts)"
+        />
+        <VictoryAxis
+          label="Distance (Meters)"
+          dependentAxis={false}
+
         />
         <VictoryAxis />
         {data.length < 2 ?
@@ -46,20 +57,18 @@ export default function Graph({ data, xMax, yMax, pwrGoal }: AppProps) {
             data={data}
           />
           :
-          <VictoryAxis
-            dependentAxis={true}
 
+
+          <VictoryLine
+            style={{
+              data: {
+                stroke: 'white', strokeWidth: 2
+              }
+            }
+            }
+            data={data}
           />
         }
-        <VictoryLine
-          style={{
-            data: {
-              stroke: 'white', strokeWidth: 2
-            }
-          }
-          }
-          data={data}
-        />
         <VictoryLine y={() => pwrGoal} style={{
           data: { stroke: 'green', strokeDasharray: "15,5", strokeWidth: 3, }
         }} />
