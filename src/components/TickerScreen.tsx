@@ -6,6 +6,7 @@ import logo from '../../assets/logo.png';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome5, Foundation } from '@expo/vector-icons';
 import { NameModal } from './HomeScreen'
+import { sqrt } from 'react-native-reanimated';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -84,7 +85,7 @@ const TickerScreen = () => {
         let pwr = isRecording ? (data[data.length - 1].y).toFixed(2) : 0
         let dist = isRecording ? (data[data.length - 1].dist) : 0
         dist = (dist >= 100 ? dist.toFixed(1) : dist.toFixed(2))
-        let speed = isRecording ? (dist / data.length * 100).toFixed(2) : 0
+        let speed = isRecording ? (Math.sqrt(pwr / 58.17) * 2.23469).toFixed(2) : 0
         return (
           <View style={{ backgroundColor: 'black', flex: 2, }}>
             <View style={styles.topRow}>
