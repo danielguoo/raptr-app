@@ -4,7 +4,7 @@
 *Section to be added later*
 
 ### Running Script to convert Firebase JSON to CSV
-1. Go to firebase.gooogle.com and click **Go to console**
+1. Go to firebase.google.com and click **Go to console**
 2. Click on the RAPTR Performance project
 3. Click on Realtime Database in the left menu
 4. Click on the 3 dots icon in the main window and then click export JSON
