@@ -113,18 +113,23 @@ export default class App extends Component<{}, AppState>{
     const currentLength = this.state.data.length;
     const nextValues = decode(newValue.value).split(",");
     console.log(newValue.uuid, newValue.value, nextValues);
-    const pwr = parseFloat(nextValues[0]);
-    let dist = parseFloat(nextValues[1]);
-    let resetDistance = this.state.resetDistance;
+    if (nextValues.length == 2) {
+      const pwr = parseFloat(nextValues[0]);
+      let dist = parseFloat(nextValues[1]);
+      let resetDistance = this.state.resetDistance;
 
-    if (!error && this.state.isRecording && currentLength === 1) {
-      resetDistance = dist;
+      if (!error && this.state.isRecording && currentLength === 1) {
+        resetDistance = dist;
+      }
+
+      console.log(resetDistance)
+
+
+      if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
+        this.setState({ data: [...this.state.data, { x: currentLength, y: pwr, dist: dist - resetDistance }], resetDistance })
+      }
     }
 
-
-    if (!error && this.state.isRecording && !Number.isNaN(pwr) && !Number.isNaN(dist)) {
-      this.setState({ data: [...this.state.data, { x: currentLength, y: pwr, dist: dist - resetDistance }], resetDistance })
-    }
   }
 
   toggleRecording = () => {

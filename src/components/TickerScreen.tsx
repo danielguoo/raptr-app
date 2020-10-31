@@ -6,7 +6,6 @@ import logo from '../../assets/logo.png';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome5, Foundation } from '@expo/vector-icons';
 import { NameModal } from './HomeScreen'
-import { sqrt } from 'react-native-reanimated';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
